@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGTR 任务规划流程图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #8892b0;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+        }
+        
+        .legend-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .legend-llm { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .legend-code { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .legend-neo4j { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .legend-robot { background: linear-gradient(135deg, #fa709a, #fee140); }
+        
+        .phase {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .phase-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .phase-2 .phase-number { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .phase-3 .phase-number { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        
+        .phase-title {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        
+        .phase-subtitle {
+            color: #8892b0;
+            font-size: 0.9em;
+        }
+        
+        .flow-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: stretch;
+        }
+        
+        .step-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 15px;
+            padding: 15px;
+            width: 180px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .step-card.llm { border-color: #764ba2; }
+        .step-card.llm:hover { background: rgba(118, 75, 162, 0.2); }
+        
+        .step-card.code { border-color: #38ef7d; }
+        .step-card.code:hover { background: rgba(56, 239, 125, 0.2); }
+        
+        .step-card.neo4j { border-color: #f5576c; }
+        .step-card.neo4j:hover { background: rgba(245, 87, 108, 0.2); }
+        
+        .step-card.robot { border-color: #fee140; }
+        .step-card.robot:hover { background: rgba(254, 225, 64, 0.2); }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .step-card.llm .step-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .step-card.code .step-icon { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .step-card.neo4j .step-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .step-card.robot .step-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .step-desc {
+            font-size: 0.75em;
+            color: #8892b0;
+            margin-bottom: 8px;
+        }
+        
+        .step-eq {
+            font-size: 0.7em;
+            padding: 4px 8px;
+            background: rgba(0,212,255,0.2);
+            border-radius: 10px;
+            display: inline-block;
+            color: #00d4ff;
+        }
+        
+        .arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #4a5568;
+            min-width: 30px;
+        }
+        
+        .loop-container {
+            background: rgba(240, 147, 251, 0.1);
+            border: 2px dashed #f093fb;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .loop-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #f093fb;
+        }
+        
+        .loop-icon {
+            font-size: 24px;
+            animation: rotate 3s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .loop-title {
+            font-weight: 600;
+        }
+        
+        .loop-flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .decision-diamond {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+        }
+        
+        .decision-content {
+            transform: rotate(-45deg);
+            text-align: center;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .memory-section {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .memory-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            width: 280px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .memory-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        .memory-long h4 { color: #38ef7d; }
+        .memory-short h4 { color: #00d4ff; }
+        
+        .memory-item {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin: 5px 0;
+            color: #a0aec0;
+        }
+        
+        .tooltip {
+            display: none;
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            width: 250px;
+            z-index: 100;
+            font-size: 0.85em;
+            line-height: 1.5;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .step-card:hover .tooltip {
+            display: block;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 10px;
+        }
+        
+        .final-output {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(56, 239, 125, 0.2), rgba(0, 212, 255, 0.2));
+            border-radius: 15px;
+            border: 2px solid #38ef7d;
+        }
+        
+        .final-output h3 {
+            color: #38ef7d;
+            margin-bottom: 10px;
+        }
+        
+        .action-sequence {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .action-item {
+            padding: 8px 15px;
+            background: rgba(56, 239, 125, 0.3);
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .step-card {
+                width: 150px;
+            }
+            .memory-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 KGTR 任务规划流程</h1>
+        <p class="subtitle">KG-enhanced Planning RNN with Dual-Layer Memory Architecture</p>
+        
+        <!-- 图例 -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-icon legend-llm">🧠</div>
+                <span>LLM/VLM API调用</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon legend-code">💻</div>
+                <span>程序化计算</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon legend-neo4j">🔷</div>
+                <span>Neo4j图操作</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon legend-robot">🔧</div>
+                <span>机器人执行</span>
+            </div>
+        </div>
+
+        <!-- Phase 2: 规划准备 -->
+        <div class="phase phase-2">
+            <div class="phase-header">
+                <div class="phase-number">2</div>
+                <div>
+                    <div class="phase-title">任务规划准备 (KGTR Pre-processing)</div>
+                    <div class="phase-subtitle">从用户指令到规划上下文构建</div>
+                </div>
+            </div>
+            
+            <div class="flow-container">
+                <div class="step-card llm">
+                    <div class="step-icon">🧠</div>
+                    <div class="step-title">目标对象识别</div>
+                    <div class="step-desc">从自然语言指令中提取目标对象</div>
+                    <div class="step-eq">GPT-4</div>
+                    <div class="tooltip">
+                        <strong>输入:</strong> "把红色杯子放到盒子里"<br>
+                        <strong>输出:</strong> ["红色杯子", "盒子"]<br>
+                        <strong>作用:</strong> 识别任务涉及的关键对象
+                    </div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="step-card neo4j">
+                    <div class="step-icon">🔷</div>
+                    <div class="step-title">子图提取</div>
+                    <div class="step-desc">从KG中提取任务相关子图</div>
+                    <div class="step-eq">Eq. 10</div>
+                    <div class="tooltip">
+                        <strong>操作:</strong> Neo4j Cypher查询<br>
+                        <strong>公式:</strong> G_task = ExtractSubgraph(G, targets)<br>
+                        <strong>输出:</strong> 包含目标对象及其空间关系的子图
+                    </div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="step-card neo4j">
+                    <div class="step-icon">🔷</div>
+                    <div class="step-title">约束查询</div>
+                    <div class="step-desc">提取空间约束条件</div>
+                    <div class="step-eq">Eq. 12-14</div>
+                    <div class="tooltip">
+                        <strong>查询内容:</strong><br>
+                        • 遮挡约束 (blocking)<br>
+                        • 容器约束 (containment)<br>
+                        • 可达性约束 (accessibility)
+                    </div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="step-card code">
+                    <div class="step-icon">💻</div>
+                    <div class="step-title">复杂度计算</div>
+                    <div class="step-desc">计算场景空间复杂度</div>
+                    <div class="step-eq">Eq. 27-28</div>
+                    <div class="tooltip">
+                        <strong>公式:</strong> SpatialComplexity = α|V| + β|E| + γ·Blocking + δ·Depth<br>
+                        <strong>作用:</strong> 评估任务难度
+                    </div>
+                </div>
+                
+                <div class="arrow">→</div>
+                
+                <div class="step-card code">
+                    <div class="step-icon">💻</div>
+                    <div class="step-title">规划深度决策</div>
+                    <div class="step-desc">确定规划迭代次数</div>
+                    <div class="step-eq">Eq. 29</div>
+                    <div class="tooltip">
+                        <strong>逻辑:</strong> 复杂度高→深度规划，复杂度低→浅层规划<br>
+                        <strong>输出:</strong> planning_depth = f(complexity)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 双层记忆初始化 -->
+            <div class="memory-section">
+                <div class="memory-box memory-long">
+                    <h4>📚 长期记忆初始化 (Eq. 15)</h4>
+                    <div class="memory-item">🗺️ 全局布局 (Global Layout)</div>
+                    <div class="memory-item">📜 任务历史 (Task History)</div>
+                    <div class="memory-item">🔗 稳定空间关系 (Stable Relations)</div>
+                    <div class="memory-item">⚠️ 约束规则 (Constraint Rules)</div>
+                </div>
+                
+                <div class="memory-box memory-short">
+                    <h4>⚡ 短期记忆初始化 (Eq. 16)</h4>
+                    <div class="memory-item">📍 当前状态 (Current State)</div>
+                    <div class="memory-item">🔄 动态关系 (Dynamic Relations)</div>
+                    <div class="memory-item">✅ 已执行动作 (Executed Actions)</div>
+                    <div class="memory-item">🎯 活跃约束 (Active Constraints)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 3: 循环规划执行 -->
+        <div class="phase phase-3">
+            <div class="phase-header">
+                <div class="phase-number">3</div>
+                <div>
+                    <div class="phase-title">循环规划执行 (KG-enhanced Planning RNN)</div>
+                    <div class="phase-subtitle">每个时间步 t 的处理流程</div>
+                </div>
+            </div>
+            
+            <div class="loop-container">
+                <div class="loop-header">
+                    <span class="loop-icon">🔄</span>
+                    <span class="loop-title">Planning Loop (t = 1, 2, ..., planning_depth)</span>
+                </div>
+                
+                <div class="loop-flow">
+                    <div class="step-card code">
+                        <div class="step-icon">💻</div>
+                        <div class="step-title">记忆融合</div>
+                        <div class="step-desc">合并长短期记忆</div>
+                        <div class="step-eq">Eq. 17</div>
+                        <div class="tooltip">
+                            <strong>公式:</strong> M_t = Fusion(M^L, M^S_t)<br>
+                            <strong>作用:</strong> 构建当前步骤的完整上下文
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card code">
+                        <div class="step-icon">💻</div>
+                        <div class="step-title">Prompt构造</div>
+                        <div class="step-desc">组装LLM输入</div>
+                        <div class="step-eq">Template</div>
+                        <div class="tooltip">
+                            <strong>包含:</strong><br>
+                            • 任务指令<br>
+                            • 子图 G_task<br>
+                            • 约束 C_spatial<br>
+                            • 融合记忆 M_t
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card llm">
+                        <div class="step-icon">🧠</div>
+                        <div class="step-title">动作生成</div>
+                        <div class="step-desc">LLM生成候选动作</div>
+                        <div class="step-eq">Eq. 11</div>
+                        <div class="tooltip">
+                            <strong>输入:</strong> 构造好的Prompt<br>
+                            <strong>输出:</strong> 候选动作 a_t<br>
+                            <strong>例如:</strong> Pick(red_cup)
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card neo4j">
+                        <div class="step-icon">🔷</div>
+                        <div class="step-title">约束查询</div>
+                        <div class="step-desc">查询动作相关约束</div>
+                        <div class="step-eq">Eq. 24</div>
+                        <div class="tooltip">
+                            <strong>查询:</strong> 当前动作涉及的空间约束<br>
+                            <strong>例如:</strong> red_cup是否被遮挡？
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card code">
+                        <div class="step-icon">💻</div>
+                        <div class="step-title">约束验证</div>
+                        <div class="step-desc">Spatial-KG-CoT验证</div>
+                        <div class="step-eq">Eq. 25-26</div>
+                        <div class="tooltip">
+                            <strong>检查:</strong> 动作是否满足所有空间约束<br>
+                            <strong>输出:</strong> (is_valid, violation_reason)
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 决策点 -->
+                <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0; gap: 20px; flex-wrap: wrap;">
+                    <div class="decision-diamond">
+                        <div class="decision-content">约束<br>满足?</div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: #38ef7d; font-weight: bold;">✓ 是</span>
+                            <span class="arrow">→</span>
+                            <div class="step-card code" style="width: 150px;">
+                                <div class="step-icon">💻</div>
+                                <div class="step-title">更新短期记忆</div>
+                                <div class="step-eq">Eq. 16</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: #f5576c; font-weight: bold;">✗ 否</span>
+                            <span class="arrow">→</span>
+                            <div class="step-card llm" style="width: 150px;">
+                                <div class="step-icon">🧠</div>
+                                <div class="step-title">重新规划</div>
+                                <div class="step-desc">生成前置动作</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 执行和更新 -->
+                <div class="loop-flow">
+                    <div class="step-card robot">
+                        <div class="step-icon">🔧</div>
+                        <div class="step-title">机器人执行</div>
+                        <div class="step-desc">执行物理动作</div>
+                        <div class="step-eq">Robot API</div>
+                        <div class="tooltip">
+                            <strong>动作:</strong> Pick(), Place(), Open(), Close()<br>
+                            <strong>执行:</strong> 通过机器人控制接口
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card llm">
+                        <div class="step-icon">🧠</div>
+                        <div class="step-title">场景重观测</div>
+                        <div class="step-desc">VLM分析新场景</div>
+                        <div class="step-eq">GPT-4V</div>
+                        <div class="tooltip">
+                            <strong>操作:</strong> 拍摄新图像<br>
+                            <strong>分析:</strong> 提取更新后的空间关系
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card neo4j">
+                        <div class="step-icon">🔷</div>
+                        <div class="step-title">知识图谱更新</div>
+                        <div class="step-desc">增量更新KG</div>
+                        <div class="step-eq">Alg. 2</div>
+                        <div class="tooltip">
+                            <strong>操作:</strong> 更新节点和边<br>
+                            <strong>处理:</strong> 冲突检测与解决
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="step-card code">
+                        <div class="step-icon">💻</div>
+                        <div class="step-title">完成检查</div>
+                        <div class="step-desc">检查任务是否完成</div>
+                        <div class="step-eq">Logic</div>
+                        <div class="tooltip">
+                            <strong>检查:</strong> 目标状态是否达成<br>
+                            <strong>输出:</strong> 完成→退出循环，未完成→继续
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 15px; color: #f093fb;">
+                    ↩️ 未完成则返回循环开始，进入下一时间步 t+1
+                </div>
+            </div>
+            
+            <!-- 最终输出 -->
+            <div class="final-output">
+                <h3>✅ 任务完成 - 输出</h3>
+                <p>生成完整的可执行动作序列</p>
+                <div class="action-sequence">
+                    <div class="action-item">1. Open(container)</div>
+                    <div class="action-item">2. Pick(red_cup)</div>
+                    <div class="action-item">3. Place(red_cup, container)</div>
+                    <div class="action-item">4. Close(container)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 总结 -->
+        <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; margin-top: 20px;">
+            <h3 style="text-align: center; margin-bottom: 20px;">📊 执行者分工总结</h3>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                <div style="text-align: center;">
+                    <div class="legend-icon legend-llm" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 10px;">🧠</div>
+                    <div style="font-weight: bold; color: #764ba2;">LLM/VLM</div>
+                    <div style="font-size: 0.85em; color: #8892b0;">语义理解<br>动作生成<br>重规划</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="legend-icon legend-code" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 10px;">💻</div>
+                    <div style="font-weight: bold; color: #38ef7d;">程序化计算</div>
+                    <div style="font-size: 0.85em; color: #8892b0;">公式计算<br>约束验证<br>记忆管理</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="legend-icon legend-neo4j" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 10px;">🔷</div>
+                    <div style="font-weight: bold; color: #f5576c;">Neo4j</div>
+                    <div style="font-size: 0.85em; color: #8892b0;">图存储<br>子图查询<br>关系更新</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="legend-icon legend-robot" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 10px;">🔧</div>
+                    <div style="font-weight: bold; color: #fee140;">机器人</div>
+                    <div style="font-size: 0.85em; color: #8892b0;">物理执行<br>环境交互</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 添加卡片点击效果
+        document.querySelectorAll('.step-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
